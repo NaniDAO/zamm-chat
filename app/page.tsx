@@ -1,9 +1,12 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import ChatInput from "@/component/chat-input";
+import ChatInput from "@/components/chat-input";
+import { EthereumIcon } from "@/components/ethereum-icon";
+import { useAccount } from "wagmi";
 
 export default function Chat() {
+  const { address } = useAccount();
   const {
     error,
     status,
@@ -14,6 +17,9 @@ export default function Chat() {
     reload,
     stop,
   } = useChat({
+    body: {
+      user: address,
+    },
     onResponse: (response) => {
       console.log("Response received:", response);
     },
@@ -22,40 +28,31 @@ export default function Chat() {
     },
   });
 
-  return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      {messages.map((m) => (
-        <div key={m.id} className="whitespace-pre-wrap">
-          {m.role === "user" ? "User: " : "AI: "}
-          {m.parts.map((part) => {
-            if (part.type === "text") {
-              return part.text;
-            }
-          })}
-        </div>
-      ))}
+  const hasMessages = messages.length > 0;
 
-      {(status === "submitted" || status === "streaming") && (
-        <div className="mt-4 text-gray-500">
-          {status === "submitted" && <div>Loading...</div>}
-          <button
-            type="button"
-            className="px-4 py-2 mt-4 text-blue-500 border border-blue-500 rounded-md"
-            onClick={stop}
-          >
-            Stop
-          </button>
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center relative">
+      {!hasMessages && (
+        <div className="w-screen h-screen flex items-center justify-center">
+          <EthereumIcon />
+        </div>
+      )}
+
+      {hasMessages && (
+        <div className="w-full max-w-md py-24 mx-auto stretch">
+          {messages.map((m) => (
+            <div key={m.id} className="whitespace-pre-wrap">
+              {m.role === "user" ? "User: " : "AI: "}
+              {m.parts.map((part) => (part.type === "text" ? part.text : null))}
+            </div>
+          ))}
         </div>
       )}
 
       {error && (
-        <div className="mt-4">
-          <div className="text-red-500">An error occurred.</div>
-          <button
-            type="button"
-            className="px-4 py-2 mt-4 text-blue-500 border border-blue-500 rounded-md"
-            onClick={() => reload()}
-          >
+        <div className="absolute bottom-20 text-red-400">
+          <div>An error occurred.</div>
+          <button type="button" onClick={() => reload()} className="underline">
             Retry
           </button>
         </div>
@@ -66,6 +63,7 @@ export default function Chat() {
         input={input}
         handleInputChange={handleInputChange}
         onSubmit={handleSubmit}
+        stop={stop}
       />
     </div>
   );
