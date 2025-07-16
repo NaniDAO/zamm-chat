@@ -4,6 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import ChatInput from "@/components/chat-input";
 import { EthereumIcon } from "@/components/ethereum-icon";
 import { useAccount } from "wagmi";
+import { cn } from "@/lib/utils";
 
 export default function Chat() {
   const { address } = useAccount();
@@ -31,19 +32,45 @@ export default function Chat() {
   const hasMessages = messages.length > 0;
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center relative">
+    <div className="">
       {!hasMessages && (
-        <div className="w-screen h-screen flex items-center justify-center">
+        <div className="w-screen h-[90vh] flex items-center justify-center">
           <EthereumIcon />
         </div>
       )}
 
       {hasMessages && (
-        <div className="w-full max-w-md py-24 mx-auto stretch">
+        <div className="w-full py-14 mx-40 stretch">
           {messages.map((m) => (
-            <div key={m.id} className="whitespace-pre-wrap">
-              {m.role === "user" ? "User: " : "AI: "}
-              {m.parts.map((part) => (part.type === "text" ? part.text : null))}
+            <div
+              key={m.id}
+              className={cn(
+                "p-4 rounded-md max-w-2xl",
+                m.role === "assistant" ? "text-yellow-950" : "text-neutral-900",
+              )}
+            >
+              <span className="mr-2">{m.role === "assistant" ? "☻" : ">"}</span>
+              {m.parts.map((part, i) => {
+                if (part.type === "text") {
+                  return part.text;
+                }
+                if (part.type === "reasoning") {
+                  return <ReasoningBlock details={part.details} />;
+                }
+                if (part.type === "tool-invocation") {
+                  return (
+                    <div
+                      key={i}
+                      className="mt-2 mb-1 text-xs text-neutral-500 font-mono italic border-l-2 border-blue-300 pl-2"
+                    >
+                      using tool:{" "}
+                      <span className="text-blue-700">
+                        {part.toolInvocation.toolName}
+                      </span>
+                    </div>
+                  );
+                }
+              })}
             </div>
           ))}
         </div>
@@ -65,6 +92,34 @@ export default function Chat() {
         onSubmit={handleSubmit}
         stop={stop}
       />
+    </div>
+  );
+}
+
+import { useState } from "react";
+
+function ReasoningBlock({ details }: { details: any[] }) {
+  const [show, setShow] = useState(false);
+
+  return (
+    <div className="mt-2">
+      <button
+        onClick={() => setShow(!show)}
+        className="text-xs underline text-neutral-500"
+      >
+        {show ? "Hide reasoning" : "Show reasoning"}
+      </button>
+      {show && (
+        <div className="mt-1 p-2 rounded bg-neutral-100 text-neutral-800 text-sm whitespace-pre-wrap font-mono">
+          {details.map((d, idx) =>
+            d.type === "text" ? (
+              <div key={idx}>{d.text}</div>
+            ) : (
+              <div key={idx}>[Redacted]</div>
+            ),
+          )}
+        </div>
+      )}
     </div>
   );
 }

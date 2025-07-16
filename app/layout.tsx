@@ -22,11 +22,7 @@ export default function RootLayout({
           <SidebarProvider>
             {children}
             <AppSidebar />
-            <div className="fixed top-2 w-screen flex justify-between">
-              {/* &lt; */}
-              <div className="bg-black">
-                <SidebarTrigger />
-              </div>
+            <div className="fixed top-2 w-screen flex justify-end">
               <ConnectWallet className="mr-2" />
             </div>
           </SidebarProvider>

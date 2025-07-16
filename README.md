@@ -1,3 +1,3 @@
 # ZAMM Chat UI
 
-Powered by `agentek`
+powered by `agentek`

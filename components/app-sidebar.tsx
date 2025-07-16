@@ -21,7 +21,7 @@ export function AppSidebar() {
         <SidebarTrigger />
       </SidebarHeader>
       <SidebarContent>
-        <span>*soon*</span>
+        {state === "expanded" && <span>*soon*</span>}
         <SidebarGroup />
         <SidebarGroup />
       </SidebarContent>
