@@ -38,7 +38,7 @@ export default function Chat() {
           <EthereumIcon />
         </div>
       )}
-
+      f
       {hasMessages && (
         <div className="w-full py-14 mx-40 stretch">
           {messages.map((m) => (
@@ -46,7 +46,9 @@ export default function Chat() {
               key={m.id}
               className={cn(
                 "p-4 rounded-md max-w-2xl",
-                m.role === "assistant" ? "text-yellow-950" : "text-neutral-900",
+                m.role === "assistant"
+                  ? "text-secondary-foreground"
+                  : "text-foreground",
               )}
             >
               <span className="mr-2">{m.role === "assistant" ? "☻" : ">"}</span>
@@ -61,10 +63,10 @@ export default function Chat() {
                   return (
                     <div
                       key={i}
-                      className="mt-2 mb-1 text-xs text-neutral-500 font-mono italic border-l-2 border-blue-300 pl-2"
+                      className="mt-2 mb-1 text-xs text-secondary-foreground font-mono italic border-l-2 border-primary -300 pl-2"
                     >
                       using tool:{" "}
-                      <span className="text-blue-700">
+                      <span className="bg-accent text-accent-foreground">
                         {part.toolInvocation.toolName}
                       </span>
                     </div>
@@ -75,7 +77,6 @@ export default function Chat() {
           ))}
         </div>
       )}
-
       {error && (
         <div className="absolute bottom-20 text-red-400">
           <div>An error occurred.</div>
@@ -84,7 +85,6 @@ export default function Chat() {
           </button>
         </div>
       )}
-
       <ChatInput
         status={status}
         input={input}

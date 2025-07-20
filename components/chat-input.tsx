@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { StopIcon } from "./ui/stop-icon";
 
 export default function ChatInput({
   status,
@@ -48,12 +49,12 @@ export default function ChatInput({
         {stop && (status === "streaming" || status === "submitted") && (
           <Button
             size="icon"
-            className="rounded-full ml-2"
+            className="rounded-full ml-2 flex items-center justify-center"
             type="submit"
             variant="ghost"
             onClick={stop}
           >
-            🛑
+            <StopIcon />
           </Button>
         )}
       </form>
